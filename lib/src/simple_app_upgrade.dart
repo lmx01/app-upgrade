@@ -211,7 +211,7 @@ class _SimpleAppUpgradeWidget extends State<SimpleAppUpgradeWidget> {
       children: <Widget>[
         Divider(
           height: 1,
-          color: Colors.grey,
+          color: Color(0xFF52D2CA),
         ),
         Row(
           children: <Widget>[
