@@ -59,6 +59,7 @@ class AppUpgrade {
     List<Color> okBackgroundColors,
     Color progressBarColor,
     double borderRadius = 20.0,
+    double dialogWidth,
     String iosAppId,
     AppMarketInfo appMarketInfo,
     VoidCallback onCancel,
@@ -78,6 +79,7 @@ class AppUpgrade {
             cancelTextStyle: cancelTextStyle,
             okBackgroundColors: okBackgroundColors,
             okText: okText,
+            dialogWidth: dialogWidth,
             okTextStyle: okTextStyle,
             borderRadius: borderRadius,
             progressBarColor: progressBarColor,
@@ -101,6 +103,7 @@ class AppUpgrade {
     String title,
     List<String> contents, {
     String apkDownloadUrl,
+    double dialogWidth,
     bool force = false,
     TextStyle titleStyle,
     TextStyle contentStyle,
@@ -131,30 +134,30 @@ class AppUpgrade {
                     borderRadius:
                         BorderRadius.all(Radius.circular(borderRadius))),
                 child: SimpleAppUpgradeWidget(
-                  title: title,
-                  titleStyle: titleStyle,
-                  contents: contents,
-                  contentStyle: contentStyle,
-                  cancelText: cancelText,
-                  cancelTextStyle: cancelTextStyle,
-                  okText: okText,
-                  okTextStyle: okTextStyle,
-                  okBackgroundColors: okBackgroundColors ??
-                      [
-                        Theme.of(context).primaryColor,
-                        Theme.of(context).primaryColor
-                      ],
-                  progressBarColor: progressBarColor,
-                  borderRadius: borderRadius,
-                  downloadUrl: apkDownloadUrl,
-                  force: force,
-                  iosAppId: iosAppId,
-                  appMarketInfo: appMarketInfo,
+                    dialogWidth: dialogWidth,
+                    title: title,
+                    titleStyle: titleStyle,
+                    contents: contents,
+                    contentStyle: contentStyle,
+                    cancelText: cancelText,
+                    cancelTextStyle: cancelTextStyle,
+                    okText: okText,
+                    okTextStyle: okTextStyle,
+                    okBackgroundColors: okBackgroundColors ??
+                        [
+                          Theme.of(context).primaryColor,
+                          Theme.of(context).primaryColor
+                        ],
+                    progressBarColor: progressBarColor,
+                    borderRadius: borderRadius,
+                    downloadUrl: apkDownloadUrl,
+                    force: force,
+                    iosAppId: iosAppId,
+                    appMarketInfo: appMarketInfo,
                     onCancel: onCancel,
                     onOk: onOk,
                     downloadProgress: downloadProgress,
-                    downloadStatusChange: downloadStatusChange
-                )),
+                    downloadStatusChange: downloadStatusChange)),
           );
         });
   }

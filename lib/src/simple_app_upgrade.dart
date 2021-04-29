@@ -11,27 +11,29 @@ import 'liquid_progress_indicator.dart';
 /// des:app升级提示控件
 ///
 class SimpleAppUpgradeWidget extends StatefulWidget {
-  const SimpleAppUpgradeWidget(
-      {@required this.title,
-      this.titleStyle,
-      @required this.contents,
-      this.contentStyle,
-      this.cancelText,
-      this.cancelTextStyle,
-      this.okText,
-      this.okTextStyle,
-      this.okBackgroundColors,
-      this.progressBar,
-      this.progressBarColor,
-      this.borderRadius = 10,
-      this.downloadUrl,
-      this.force = false,
-      this.iosAppId,
-      this.appMarketInfo,
-      this.onCancel,
-      this.onOk,
-      this.downloadProgress,
-      this.downloadStatusChange});
+  const SimpleAppUpgradeWidget({
+    @required this.title,
+    this.titleStyle,
+    @required this.contents,
+    this.contentStyle,
+    this.cancelText,
+    this.cancelTextStyle,
+    this.okText,
+    this.okTextStyle,
+    this.okBackgroundColors,
+    this.progressBar,
+    this.progressBarColor,
+    this.borderRadius = 10,
+    this.downloadUrl,
+    this.force = false,
+    this.iosAppId,
+    this.appMarketInfo,
+    this.onCancel,
+    this.onOk,
+    this.downloadProgress,
+    this.downloadStatusChange,
+    this.dialogWidth,
+  });
 
   ///
   /// 升级标题
@@ -42,6 +44,11 @@ class SimpleAppUpgradeWidget extends StatefulWidget {
   /// 标题样式
   ///
   final TextStyle titleStyle;
+
+  ///
+  /// 对话框的宽度
+  ///
+  final double dialogWidth;
 
   ///
   /// 升级提示内容
@@ -136,6 +143,7 @@ class _SimpleAppUpgradeWidget extends State<SimpleAppUpgradeWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: widget.dialogWidth,
       child: Stack(
         children: <Widget>[
           _buildInfoWidget(context),
@@ -351,7 +359,7 @@ class _SimpleAppUpgradeWidget extends State<SimpleAppUpgradeWidget> {
     } catch (e) {
       print('$e');
       _downloadProgress = 0;
-      _updateDownloadStatus(DownloadStatus.error,error: e);
+      _updateDownloadStatus(DownloadStatus.error, error: e);
     }
   }
 
