@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_app_upgrade/flutter_app_upgrade.dart';
 
+import 'custom_app_upgrade.dart';
 import 'download_status.dart';
 import 'simple_app_upgrade.dart';
 
@@ -47,28 +48,28 @@ class AppUpgrade {
   ///
   /// `downloadStatusChange`：下载状态变化回调
   ///
-  static appUpgrade(
+  static void appUpgrade(
     BuildContext context,
-    Future<AppUpgradeInfo> future, {
-    TextStyle titleStyle,
-    TextStyle contentStyle,
-    String cancelText,
-    TextStyle cancelTextStyle,
-    String okText,
-    TextStyle okTextStyle,
-    List<Color> okBackgroundColors,
-    Color progressBarColor,
+    Future<AppUpgradeInfo?> future, {
+    TextStyle? titleStyle,
+    TextStyle? contentStyle,
+    String? cancelText,
+    TextStyle? cancelTextStyle,
+    String? okText,
+    TextStyle? okTextStyle,
+    List<Color>? okBackgroundColors,
+    Color? progressBarColor,
     double borderRadius = 20.0,
-    double dialogWidth,
-    String iosAppId,
-    AppMarketInfo appMarketInfo,
-    VoidCallback onCancel,
-    VoidCallback onOk,
-    DownloadProgressCallback downloadProgress,
-    DownloadStatusChangeCallback downloadStatusChange,
+    required String iosAppId,
+    AppMarketInfo? appMarketInfo,
+    VoidCallback? onCancel,
+    VoidCallback? onOk,
+    DownloadProgressCallback? downloadProgress,
+    DownloadStatusChangeCallback? downloadStatusChange,
+    Widget Function(VoidCallback onOk)? dialogBuilder,
   }) {
-    future.then((AppUpgradeInfo appUpgradeInfo) {
-      if (appUpgradeInfo != null && appUpgradeInfo.title != null) {
+    future.then((AppUpgradeInfo? appUpgradeInfo) {
+      if (appUpgradeInfo != null) {
         _showUpgradeDialog(
             context, appUpgradeInfo.title, appUpgradeInfo.contents,
             apkDownloadUrl: appUpgradeInfo.apkDownloadUrl,
@@ -79,7 +80,6 @@ class AppUpgrade {
             cancelTextStyle: cancelTextStyle,
             okBackgroundColors: okBackgroundColors,
             okText: okText,
-            dialogWidth: dialogWidth,
             okTextStyle: okTextStyle,
             borderRadius: borderRadius,
             progressBarColor: progressBarColor,
@@ -88,7 +88,9 @@ class AppUpgrade {
             onCancel: onCancel,
             onOk: onOk,
             downloadProgress: downloadProgress,
-            downloadStatusChange: downloadStatusChange);
+            downloadStatusChange: downloadStatusChange,
+            //自定义升级界面
+            dialogBuilder: dialogBuilder);
       }
     }).catchError((onError) {
       print('$onError');
@@ -98,73 +100,83 @@ class AppUpgrade {
   ///
   /// 展示app升级提示框
   ///
-  static _showUpgradeDialog(
+  static void _showUpgradeDialog(
     BuildContext context,
     String title,
     List<String> contents, {
-    String apkDownloadUrl,
-    double dialogWidth,
+    String? apkDownloadUrl,
     bool force = false,
-    TextStyle titleStyle,
-    TextStyle contentStyle,
-    String cancelText,
-    TextStyle cancelTextStyle,
-    String okText,
-    TextStyle okTextStyle,
-    List<Color> okBackgroundColors,
-    Color progressBarColor,
+    TextStyle? titleStyle,
+    TextStyle? contentStyle,
+    String? cancelText,
+    TextStyle? cancelTextStyle,
+    String? okText,
+    TextStyle? okTextStyle,
+    List<Color>? okBackgroundColors,
+    Color? progressBarColor,
     double borderRadius = 20.0,
-    String iosAppId,
-    AppMarketInfo appMarketInfo,
-    VoidCallback onCancel,
-    VoidCallback onOk,
-    DownloadProgressCallback downloadProgress,
-    DownloadStatusChangeCallback downloadStatusChange,
+    required String iosAppId,
+    AppMarketInfo? appMarketInfo,
+    VoidCallback? onCancel,
+    VoidCallback? onOk,
+    DownloadProgressCallback? downloadProgress,
+    DownloadStatusChangeCallback? downloadStatusChange,
+    Widget Function(VoidCallback onOk)? dialogBuilder,
   }) {
     showDialog(
         context: context,
-        barrierDismissible: true,
+        barrierDismissible: false,
         builder: (context) {
           return WillPopScope(
             onWillPop: () async {
               return false;
             },
-            child: Dialog(
-                shape: RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.all(Radius.circular(borderRadius))),
-                child: SimpleAppUpgradeWidget(
-                    dialogWidth: dialogWidth,
-                    title: title,
-                    titleStyle: titleStyle,
-                    contents: contents,
-                    contentStyle: contentStyle,
-                    cancelText: cancelText,
-                    cancelTextStyle: cancelTextStyle,
-                    okText: okText,
-                    okTextStyle: okTextStyle,
-                    okBackgroundColors: okBackgroundColors ??
-                        [
-                          Theme.of(context).primaryColor,
-                          Theme.of(context).primaryColor
-                        ],
-                    progressBarColor: progressBarColor,
-                    borderRadius: borderRadius,
-                    downloadUrl: apkDownloadUrl,
-                    force: force,
-                    iosAppId: iosAppId,
-                    appMarketInfo: appMarketInfo,
-                    onCancel: onCancel,
-                    onOk: onOk,
-                    downloadProgress: downloadProgress,
-                    downloadStatusChange: downloadStatusChange)),
+            child: dialogBuilder != null
+                ? Dialog(
+                    insetPadding:
+                        EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
+                    child: CustomAppUpgradeWidget(
+                        iosAppId: iosAppId, dialogBuilder: dialogBuilder),
+                    backgroundColor: Colors.transparent,
+                  )
+                : Dialog(
+                    shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.all(Radius.circular(borderRadius))),
+                    child: SimpleAppUpgradeWidget(
+                        title: title,
+                        titleStyle: titleStyle,
+                        contents: contents,
+                        contentStyle: contentStyle,
+                        cancelText: cancelText,
+                        cancelTextStyle: cancelTextStyle,
+                        okText: okText,
+                        okTextStyle: okTextStyle,
+                        okBackgroundColors: okBackgroundColors ??
+                            [
+                              Theme.of(context).primaryColor,
+                              Theme.of(context).primaryColor
+                            ],
+                        progressBarColor: progressBarColor,
+                        borderRadius: borderRadius,
+                        downloadUrl: apkDownloadUrl,
+                        force: force,
+                        iosAppId: iosAppId,
+                        appMarketInfo: appMarketInfo,
+                        onCancel: onCancel,
+                        onOk: onOk,
+                        downloadProgress: downloadProgress,
+                        downloadStatusChange: downloadStatusChange)),
           );
         });
   }
 }
 
 class AppInfo {
-  AppInfo({this.versionName, this.versionCode, this.packageName});
+  AppInfo(
+      {required this.versionName,
+      required this.versionCode,
+      required this.packageName});
 
   String versionName;
   String versionCode;
@@ -173,8 +185,8 @@ class AppInfo {
 
 class AppUpgradeInfo {
   AppUpgradeInfo(
-      {@required this.title,
-      @required this.contents,
+      {required this.title,
+      required this.contents,
       this.apkDownloadUrl,
       this.force = false});
 
@@ -191,7 +203,7 @@ class AppUpgradeInfo {
   ///
   /// apk下载url
   ///
-  final String apkDownloadUrl;
+  final String? apkDownloadUrl;
 
   ///
   /// 是否强制升级
